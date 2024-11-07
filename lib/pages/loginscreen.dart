@@ -1,4 +1,3 @@
-import 'package:deled_new_app/pages/home_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
