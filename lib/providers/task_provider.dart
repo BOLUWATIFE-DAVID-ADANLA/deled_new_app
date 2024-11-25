@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TaskProvider extends ChangeNotifier {
-  List<Task> _tasklist = [];
+  final List<Task> _tasklist = [];
 
   List<Task> get tasks => _tasklist;
 
@@ -9,7 +9,6 @@ class TaskProvider extends ChangeNotifier {
     _tasklist.add(task);
     notifyListeners();
   }
-
   void removeTask(int index) {
     _tasklist.removeAt(index);
     notifyListeners();

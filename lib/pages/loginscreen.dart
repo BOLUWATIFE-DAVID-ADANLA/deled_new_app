@@ -1,3 +1,5 @@
+import 'package:deled_new_app/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -8,158 +10,175 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+//  manages log in
+    Future<void> login(String email, String password) async {
+      try {
+        await AuthenticationService().login(email, password);
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, '/home');
+      } catch (e) {
+        throw e.toString();
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 28),
-              //welcome text
-              const Text(
-                'Welcome Back 👋',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-
-              //cta text
-              const Text(
-                'I am happy to see you again. You can \n continue where you left off by logging in',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
-
-              //email textfield
-              Customtextfield(
-                controller: emailController,
-                prefixicon: const Icon(Icons.email),
-                hinttext: 'Email Address',
-              ),
-              const SizedBox(height: 16),
-
-// password textfield
-              Customtextfield(
-                controller: passwordController,
-                prefixicon: const Icon(Icons.lock),
-                hinttext: 'Password',
-              ),
-              const SizedBox(height: 16),
-
-              //forgot password text
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text('forgot password ?')
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              //sign in button
-              InkWell(
-                onTap: () => Navigator.pushNamed(context, '/home'),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 141, vertical: 16),
-                  decoration: const BoxDecoration(
-                      color: Color.fromRGBO(71, 90, 215, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
-                  child: const Center(
-                      child: Text(
-                    'Sign in',
-                    style: TextStyle(color: Colors.white),
-                  )),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 28),
+                //welcome text
+                const Text(
+                  'Welcome Back 👋',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
                 ),
-              ),
+                const SizedBox(height: 8),
 
-              const SizedBox(height: 48),
+                //cta text
+                const Text(
+                  'I am happy to see you again. You can \n continue where you left off by logging in',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey),
+                ),
+                const SizedBox(height: 32),
 
-              // or
-              const Center(child: Text('or')),
+                //email textfield
+                Customtextfield(
+                  controller: emailController,
+                  prefixicon: const Icon(Icons.email),
+                  hinttext: 'Email Address',
+                ),
+                const SizedBox(height: 16),
 
-              const SizedBox(height: 48),
+                // password textfield
+                Customtextfield(
+                  controller: passwordController,
+                  prefixicon: const Icon(Icons.lock),
+                  hinttext: 'Password',
+                ),
+                const SizedBox(height: 16),
 
-              //sign in with google
-              Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                      border: Border.all(color: Colors.grey)),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/icons/google-logo.png',
-                        height: 24,
-                        width: 24,
-                      ),
-                      const SizedBox(width: 53),
-                      const Text(
-                        'Sign In with Google',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  )),
-              const SizedBox(height: 16),
-
-              //sign in facebook
-              Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                      border: Border.all(color: Colors.grey)),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/icons/facebook-logo.png',
-                        height: 24,
-                        width: 24,
-                      ),
-                      const SizedBox(width: 53),
-                      const Text(
-                        'Sign In with facebook',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  )),
-              const SizedBox(height: 50),
-
-              Center(
-                child: Text.rich(
-                  TextSpan(
-                    text:
-                        "Don't have an account? ", // Default style for the first part
-                    style: const TextStyle(
-                      color: Colors.grey, // Set your color
-                      fontSize: 16, // Default font size
+                //forgot password text
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 20,
                     ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Sign Up',
-                        style: const TextStyle(
-                          color: Colors
-                              .black, // Different color for the 'Sign Up' text
-                          fontWeight: FontWeight.bold, // Make it bold
-                          fontSize: 18, // Slightly larger font size
-                        ),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
-                      ),
-                    ],
+                    Text('forgot password ?')
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                //sign in button
+                InkWell(
+                  onTap: () {
+                    login(emailController.text.trim(),
+                        passwordController.text.trim());
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 141, vertical: 16),
+                    decoration: const BoxDecoration(
+                        color: Color.fromRGBO(71, 90, 215, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(12))),
+                    child: const Center(
+                        child: Text(
+                      'Sign in',
+                      style: TextStyle(color: Colors.white),
+                    )),
                   ),
                 ),
-              )
-            ],
+
+                const SizedBox(height: 48),
+
+                // or
+                const Center(child: Text('or')),
+
+                const SizedBox(height: 48),
+
+                //sign in with google
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: Colors.grey)),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/google-logo.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(width: 53),
+                        const Text(
+                          'Sign In with Google',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    )),
+                const SizedBox(height: 16),
+
+                //sign in facebook
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: Colors.grey)),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/facebook-logo.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(width: 53),
+                        const Text(
+                          'Sign In with facebook',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    )),
+                const SizedBox(height: 50),
+
+                Center(
+                  child: Text.rich(
+                    TextSpan(
+                      text:
+                          "Don't have an account? ", // Default style for the first part
+                      style: const TextStyle(
+                        color: Colors.grey, // Set your color
+                        fontSize: 16, // Default font size
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Sign Up',
+                          style: const TextStyle(
+                            color: Colors
+                                .black, // Different color for the 'Sign Up' text
+                            fontWeight: FontWeight.bold, // Make it bold
+                            fontSize: 18, // Slightly larger font size
+                          ),
+                          recognizer: TapGestureRecognizer()..onTap = () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

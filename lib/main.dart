@@ -1,11 +1,19 @@
+import 'package:deled_new_app/firebase_options.dart';
+import 'package:deled_new_app/pages/authchecker.dart';
 import 'package:deled_new_app/pages/home_page.dart';
-import 'package:deled_new_app/pages/loginscreen.dart';
 import 'package:deled_new_app/providers/task_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // initalize firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => TaskProvider())],
@@ -23,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/': (context) => const Authchecker(),
         '/home': (context) => const HomeScreen()
       },
     );
