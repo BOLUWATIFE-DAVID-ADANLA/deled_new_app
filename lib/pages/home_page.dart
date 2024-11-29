@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:deled_new_app/providers/task_provider.dart';
-import 'package:deled_new_app/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,50 +13,43 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    Provider.of<TaskProvider>(context, listen: false).listenToTasks();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var currentUser = AuthenticationService().currentUser?.email;
+    final taskProvider = Provider.of<TaskProvider>(context);
     return Scaffold(
-      body:
-          //  Consumer<TaskProvider>(
-          //   builder: (context, value, child) => ListView.builder(
-          //     itemCount: value.tasks.length,
-          //     itemBuilder: (BuildContext context, int index) {
-          //       var result = value.tasks[index];
-          //       return Container(
-          //         height: 100,
-          //         width: 200,
-          //         color: Colors.blue,
-          //         child: Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //           children: [
-          //             Text(result.taskName),
-          //             IconButton(
-          //                 onPressed: () {
-          //                   Provider.of<TaskProvider>(context, listen: false)
-          //                       .removeTask(index);
-          //                 },
-          //                 icon: const Icon(Icons.delete))
-          //           ],
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
-          Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Text('$currentUser'),
-          ),
-          ElevatedButton(
-              onPressed: () async {
-                await AuthenticationService().signout();
-                // ignore: use_build_context_synchronously
-                Navigator.pushReplacementNamed(context, '/');
+      body: StreamBuilder(
+          stream: taskProvider.fetchTask(),
+          builder: (_, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No tasks found.'));
+            }
+
+            final tasks = snapshot.data;
+
+            return ListView.builder(
+              itemCount: tasks?.length,
+              itemBuilder: (BuildContext context, int index) {
+                var task = tasks?[index];
+                return ListTile(
+                  title: Text(task!.taskName),
+                  trailing: IconButton(
+                      onPressed: () {
+                        taskProvider.removeTask(tasks![index].taskid);
+                      },
+                      icon: const Icon(Icons.delete)),
+                );
               },
-              child: const Text('sign out'))
-        ],
-      ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showInputDialog(context);
@@ -93,8 +87,8 @@ void _showInputDialog(BuildContext context) {
 
               // Perform your submit action with `inputText`
               Provider.of<TaskProvider>(context, listen: false)
-                  .addTask(Task(inputText));
-              print(inputText);
+                  .addTask({'taskName': inputText, 'taskid': generateId(20)});
+              debugPrint(inputText);
               Navigator.of(context).pop(); // Close the dialog
             },
             child: const Text("Submit"),
@@ -103,4 +97,11 @@ void _showInputDialog(BuildContext context) {
       );
     },
   );
+}
+
+String generateId(int length) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  var random = Random();
+  return List.generate(length, (index) => chars[random.nextInt(chars.length)])
+      .join();
 }
